@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio de Percursos - Árvores Binárias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .node-circle { transition: all 0.3s ease; cursor: pointer; }
+        .node-correct { fill: #166534; stroke: #22c55e; filter: drop-shadow(0 0 8px rgba(34,197,94,0.4)); }
+        .node-mistake { fill: #7f1d1d; stroke: #ef4444; animation: pulse 1s infinite; }
+        .node-default { fill: #1e293b; stroke: #475569; }
+        .node-default:hover { stroke: #60a5fa; stroke-width: 4px; }
+        .edge-line { stroke: #334155; stroke-width: 2; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: popIn 0.2s ease-out; }
+        .bg-confetti { background-image: radial-gradient(#eab308 20%, transparent 20%), radial-gradient(#ef4444 20%, transparent 20%), radial-gradient(#3b82f6 20%, transparent 20%); background-size: 30px 30px; background-position: 0 0, 15px 15px, 5px 25px; animation: confetti 4s linear infinite; opacity: 0.1; }
+        @keyframes confetti { 0% { background-position: 0 0, 15px 15px, 5px 25px; } 100% { background-position: 0 100vh, 15px calc(100vh + 15px), 5px calc(100vh + 25px); } }
+        
+        /* Estilo para abas selecionadas */
+        .tab-active { background-color: #2563eb; color: white; border-color: #3b82f6; }
+        .tab-inactive { background-color: transparent; color: #94a3b8; border-color: transparent; }
+        .tab-inactive:hover { background-color: #1e293b; color: #e2e8f0; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-slate-200">
+
+    <!-- Topbar super discreta para Pontuação -->
+    <div class="bg-slate-950 border-b border-slate-800 px-4 py-1.5 flex justify-between items-center text-[11px] font-semibold tracking-wider text-slate-500">
+        <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1">
+                TREINO UFMA 2026
+            </span>
+        </div>
+        <div class="flex items-center gap-6">
+            <span>Desafios Concluídos: <span id="globalProgress" class="text-emerald-400 font-bold ml-1">0</span> / 12</span>
+            <span>Pontuação Total: <span id="globalScore" class="text-blue-400 font-bold ml-1">0</span> pts</span>
+        </div>
+    </div>
+
+    <!-- Header Principal Minimalista -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shrink-0 shadow-sm z-10">
+        <div>
+            <h1 class="text-lg font-bold text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                Percursos em Árvore
+            </h1>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-center">
+            <!-- Seletor de Dificuldade Discreto -->
+            <div class="flex items-center gap-2">
+                <label for="difficultySelect" class="text-xs text-slate-400 font-bold uppercase">Nível:</label>
+                <select id="difficultySelect" onchange="changeDifficulty(this.value)" class="bg-slate-950 text-white text-xs font-bold py-2 px-3 rounded-lg outline-none border border-slate-700 focus:border-blue-500 transition-colors cursor-pointer appearance-none pr-8 relative">
+                    <option value="easy">Fácil</option>
+                    <option value="medium">Médio</option>
+                    <option value="hard" selected>Difícil</option>
+                    <option value="super">Super Difícil</option>
+                </select>
+            </div>
+
+            <!-- Botões de Modo (Estilo Abas) -->
+            <div class="flex bg-slate-950 p-1 rounded-lg border border-slate-800" id="modeButtons">
+                <button onclick="changeMode('PRE')" id="btn-PRE" class="px-5 py-1.5 rounded-md text-xs font-bold transition-all tab-active">Pré-Ordem</button>
+                <button onclick="changeMode('IN')" id="btn-IN" class="px-5 py-1.5 rounded-md text-xs font-bold transition-all tab-inactive">Em-Ordem</button>
+                <button onclick="changeMode('POST')" id="btn-POST" class="px-5 py-1.5 rounded-md text-xs font-bold transition-all tab-inactive">Pós-Ordem</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-col lg:flex-row flex-1 gap-4 overflow-hidden p-4 md:p-6 bg-slate-950">
+        
+        <!-- Área da Árvore (Maior e Centralizada) -->
+        <div class="flex-[5] lg:flex-[7] bg-slate-900 border border-slate-800 rounded-xl relative flex items-center justify-center min-h-[50vh] overflow-hidden shadow-inner">
+            <svg id="treeSvg" viewBox="0 0 1200 550" class="w-full h-full" preserveAspectRatio="xMidYMid meet">
+                <g id="edgesContainer"></g>
+                <g id="nodesContainer"></g>
+            </svg>
+            
+            <!-- Feedback de Erro (Discreto) -->
+            <div id="mistakeAlert" class="hidden absolute top-6 flex items-center gap-2 bg-red-950/90 text-red-300 px-4 py-2 rounded-lg border border-red-900/50 shadow-lg text-sm font-medium z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="mistakeMsg"></span>
+            </div>
+
+            <!-- Tela de Vitória -->
+            <div id="victoryScreen" class="hidden absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-slate-950/70 transition-all z-20">
+                <div class="p-8 rounded-2xl flex flex-col items-center gap-4 border border-green-500/30 bg-slate-900 text-center animate-pop shadow-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Excelente!</h2>
+                        <p class="text-xs text-slate-400 mt-1">Percurso concluído com sucesso.</p>
+                    </div>
+                    <div id="victoryPointsBox" class="text-yellow-500 font-bold text-sm mt-1">
+                        +0 pts
+                    </div>
+                    <button onclick="resetExercise()" class="mt-4 px-6 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-sm font-bold transition-colors text-white">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tela de ZERAR O JOGO (Grand Finale) -->
+            <div id="finaleScreen" class="hidden absolute inset-0 flex items-center justify-center backdrop-blur-md bg-slate-950/95 transition-all z-30 overflow-hidden">
+                <div class="absolute inset-0 bg-confetti pointer-events-none"></div>
+                <div class="p-10 rounded-3xl flex flex-col items-center gap-6 border-2 bg-slate-900 border-blue-500 text-center animate-pop max-w-md relative z-10 shadow-2xl">
+                    <h2 class="text-2xl font-black text-white mb-2">Treinamento Concluído!</h2>
+                    <p class="text-sm text-slate-300 leading-relaxed">Você completou TODOS os 12 desafios de árvores binárias. O seu conhecimento de recursão está sólido para a prova.</p>
+                    <div class="bg-slate-950 px-6 py-4 rounded-xl border border-slate-800 w-full mt-2">
+                        <p class="text-xs text-slate-500 uppercase font-bold mb-1">Pontuação Final</p>
+                        <p class="text-3xl font-mono font-black text-blue-400" id="finalScoreDisplay">3300</p>
+                    </div>
+                    <button onclick="hardResetGame()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold transition-colors text-white mt-4">
+                        Reiniciar Tudo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Lateral de Progresso -->
+        <aside class="flex-[2] lg:flex-[3] bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col gap-4 overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sequência</h3>
+                <span id="progressBadge" class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded font-mono">0 / 0</span>
+            </div>
+
+            <div class="flex-1">
+                <div id="sequenceContainer" class="flex flex-wrap gap-2 content-start">
+                    <p class="text-slate-500 text-xs italic py-6 text-center w-full">Clique no 1º nó da sequência na árvore ao lado.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-auto pt-4 border-t border-slate-800">
+                <button onclick="undoLast()" id="btnUndo" disabled class="flex items-center justify-center gap-2 p-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg> Desfazer
+                </button>
+                <button onclick="resetExercise()" class="flex items-center justify-center gap-2 p-2.5 bg-slate-950 hover:bg-slate-800 rounded-lg text-xs font-bold text-slate-400 transition-colors border border-slate-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Limpar
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // Definição das Árvores para cada Nível
+        const trees = {
+            easy: {
+                id: 'n50', val: 50,
+                left: { id: 'n30', val: 30, left: null, right: null },
+                right: { id: 'n70', val: 70, left: null, right: null }
+            },
+            medium: {
+                id: 'n50', val: 50,
+                left: {
+                    id: 'n30', val: 30,
+                    left: { id: 'n20', val: 20, left: null, right: null },
+                    right: { id: 'n40', val: 40, left: null, right: null }
+                },
+                right: {
+                    id: 'n80', val: 80,
+                    left: { id: 'n70', val: 70, left: null, right: null },
+                    right: null
+                }
+            },
+            hard: {
+                id: 'n60', val: 60,
+                left: {
+                    id: 'n30', val: 30,
+                    left: { id: 'n10', val: 10, left: null, right: { id: 'n20', val: 20, left: null, right: null } },
+                    right: { id: 'n40', val: 40, left: { id: 'n35', val: 35, left: null, right: null }, right: null }
+                },
+                right: {
+                    id: 'n80', val: 80,
+                    left: { id: 'n70', val: 70, left: { id: 'n65', val: 65, left: null, right: null }, right: { id: 'n75', val: 75, left: null, right: null } },
+                    right: { id: 'n90', val: 90, left: { id: 'n85', val: 85, left: null, right: null }, right: null }
+                }
+            },
+            super: {
+                id: 'n100', val: 100,
+                left: {
+                    id: 'n50', val: 50,
+                    left: {
+                        id: 'n25', val: 25,
+                        left: { id: 'n10', val: 10, left: null, right: { id: 'n15', val: 15, left: null, right: null } },
+                        right: null
+                    },
+                    right: {
+                        id: 'n75', val: 75,
+                        left: { id: 'n60', val: 60, left: null, right: null },
+                        right: { id: 'n85', val: 85, left: null, right: { id: 'n90', val: 90, left: null, right: null } }
+                    }
+                }
+            }
+        };
+
+        // AJUSTADO: Y Inicial reduzido para as árvores não ficarem tão "caídas" no ecrã.
+        const treeConfigs = {
+            easy:   { startX: 600, startY: 80,  hSpacing: 180, viewBox: "0 0 1200 350" },
+            medium: { startX: 600, startY: 70,  hSpacing: 200, viewBox: "0 0 1200 400" },
+            hard:   { startX: 600, startY: 50,  hSpacing: 260, viewBox: "0 0 1200 500" },
+            super:  { startX: 700, startY: 40,  hSpacing: 340, viewBox: "0 0 1400 650" }
+        };
+
+        // --- SISTEMA DE PONTOS E PROGRESSO ---
+        const POINTS = { easy: 100, medium: 200, hard: 300, super: 500 };
+        const TOTAL_CHALLENGES = 12;
+        let globalScore = 0;
+        let completedChallenges = new Set();
+
+        let activeDifficulty = 'hard';
+        let exerciseTree = trees[activeDifficulty];
+        let activeMode = 'PRE';
+        let userSequence = [];
+        let status = 'PLAYING';
+        let mistakeVal = null;
+        let mistakeTimeout = null;
+        let treeWithPositions = null;
+        let correctAnswers = { PRE: [], IN: [], POST: [] };
+
+        function calculateAnswers() {
+            const pre = [], inOrder = [], post = [];
+            function traverse(node) {
+                if (!node) return;
+                pre.push(node.val);
+                traverse(node.left);
+                inOrder.push(node.val);
+                traverse(node.right);
+                post.push(node.val);
+            }
+            traverse(exerciseTree);
+            correctAnswers = { PRE: pre, IN: inOrder, POST: post };
+        }
+
+        function computePositions(node, x, y, hSpacing) {
+            if (!node) return null;
+            const newNode = { ...node, x, y };
+            if (newNode.left) newNode.left = computePositions(newNode.left, x - hSpacing, y + 80, hSpacing / 1.7);
+            if (newNode.right) newNode.right = computePositions(newNode.right, x + hSpacing, y + 80, hSpacing / 1.7);
+            return newNode;
+        }
+
+        function init() {
+            calculateAnswers();
+            const config = treeConfigs[activeDifficulty];
+            document.getElementById('treeSvg').setAttribute('viewBox', config.viewBox);
+            treeWithPositions = computePositions(exerciseTree, config.startX, config.startY, config.hSpacing);
+            updateUI();
+        }
+
+        function changeDifficulty(level) {
+            activeDifficulty = level;
+            exerciseTree = trees[level];
+            resetExercise();
+            init();
+        }
+
+        function changeMode(mode) {
+            activeMode = mode;
+            document.querySelectorAll('#modeButtons button').forEach(btn => {
+                btn.className = 'px-5 py-1.5 rounded-md text-xs font-bold transition-all tab-inactive border border-transparent';
+            });
+            const activeBtn = document.getElementById(`btn-${mode}`);
+            activeBtn.className = 'px-5 py-1.5 rounded-md text-xs font-bold transition-all tab-active border';
+            resetExercise();
+        }
+
+        function resetExercise() {
+            userSequence = [];
+            status = 'PLAYING';
+            mistakeVal = null;
+            clearTimeout(mistakeTimeout);
+            updateUI();
+        }
+
+        function undoLast() {
+            if (status !== 'PLAYING' || userSequence.length === 0) return;
+            userSequence.pop();
+            mistakeVal = null;
+            clearTimeout(mistakeTimeout);
+            updateUI();
+        }
+
+        function handleNodeClick(val) {
+            if (status !== 'PLAYING' || userSequence.includes(val)) return;
+            
+            const expectedNextVal = correctAnswers[activeMode][userSequence.length];
+            
+            if (val === expectedNextVal) {
+                mistakeVal = null;
+                clearTimeout(mistakeTimeout);
+                userSequence.push(val);
+                
+                if (userSequence.length === correctAnswers[activeMode].length) {
+                    handleVictory();
+                }
+            } else {
+                mistakeVal = val;
+                document.getElementById('mistakeMsg').innerText = `Ops! Era esperado o nó ${expectedNextVal}.`;
+                clearTimeout(mistakeTimeout);
+                mistakeTimeout = setTimeout(() => { mistakeVal = null; updateUI(); }, 2500);
+            }
+            updateUI();
+        }
+
+        function handleVictory() {
+            status = 'WON';
+            const challengeKey = `${activeDifficulty}-${activeMode}`;
+            let pointsEarned = 0;
+            
+            if (!completedChallenges.has(challengeKey)) {
+                completedChallenges.add(challengeKey);
+                pointsEarned = POINTS[activeDifficulty];
+                globalScore += pointsEarned;
+            }
+
+            const pointsBox = document.getElementById('victoryPointsBox');
+            if (pointsEarned > 0) {
+                pointsBox.className = "text-emerald-400 font-bold text-sm mt-1";
+                pointsBox.innerText = `+${pointsEarned} pontos!`;
+            } else {
+                pointsBox.className = "text-slate-500 font-medium text-xs mt-1";
+                pointsBox.innerText = `(Já resolvido)`;
+            }
+
+            document.getElementById('globalScore').innerText = globalScore;
+            document.getElementById('globalProgress').innerText = completedChallenges.size;
+            
+            if (completedChallenges.size === TOTAL_CHALLENGES) {
+                document.getElementById('finalScoreDisplay').innerText = globalScore;
+                setTimeout(() => { document.getElementById('finaleScreen').classList.remove('hidden'); }, 500);
+            }
+        }
+
+        function hardResetGame() {
+            globalScore = 0;
+            completedChallenges.clear();
+            document.getElementById('globalScore').innerText = globalScore;
+            document.getElementById('globalProgress').innerText = completedChallenges.size;
+            document.getElementById('finaleScreen').classList.add('hidden');
+            
+            document.getElementById('difficultySelect').value = 'easy';
+            changeDifficulty('easy');
+            changeMode('PRE');
+        }
+
+        function updateUI() {
+            const nodesContainer = document.getElementById('nodesContainer');
+            const edgesContainer = document.getElementById('edgesContainer');
+            nodesContainer.innerHTML = ''; edgesContainer.innerHTML = '';
+            renderNodes(treeWithPositions, nodesContainer, edgesContainer);
+
+            document.getElementById('progressBadge').innerText = `${userSequence.length} / ${correctAnswers[activeMode].length}`;
+
+            const seqContainer = document.getElementById('sequenceContainer');
+            if (userSequence.length === 0) {
+                seqContainer.innerHTML = '<p class="text-slate-500 text-xs italic p-4 text-center w-full">Aguardando o 1º nó da sequência.</p>';
+            } else {
+                seqContainer.innerHTML = userSequence.map((val, idx) => `
+                    <div class="bg-blue-900/40 text-blue-200 border border-blue-800/50 px-3 py-1.5 rounded font-mono text-sm font-bold flex items-center gap-2 animate-pop">
+                        <span class="text-blue-500/50 text-[10px]">${idx + 1}º</span> ${val}
+                    </div>
+                `).join('');
+            }
+
+            const mistakeAlert = document.getElementById('mistakeAlert');
+            if (mistakeVal) mistakeAlert.classList.remove('hidden');
+            else mistakeAlert.classList.add('hidden');
+
+            const victoryScreen = document.getElementById('victoryScreen');
+            if (status === 'WON' && completedChallenges.size < TOTAL_CHALLENGES) {
+                victoryScreen.classList.remove('hidden');
+            } else {
+                victoryScreen.classList.add('hidden');
+            }
+
+            document.getElementById('btnUndo').disabled = userSequence.length === 0 || status !== 'PLAYING';
+        }
+
+        function renderNodes(node, nodesContainer, edgesContainer) {
+            if (!node) return;
+            
+            const isSelected = userSequence.includes(node.val);
+            const isMistake = mistakeVal === node.val;
+            const orderIndex = userSequence.indexOf(node.val) + 1;
+
+            if (node.left) {
+                edgesContainer.innerHTML += `<line x1="${node.x}" y1="${node.y}" x2="${node.left.x}" y2="${node.left.y}" class="edge-line" />`;
+                renderNodes(node.left, nodesContainer, edgesContainer);
+            }
+            if (node.right) {
+                edgesContainer.innerHTML += `<line x1="${node.x}" y1="${node.y}" x2="${node.right.x}" y2="${node.right.y}" class="edge-line" />`;
+                renderNodes(node.right, nodesContainer, edgesContainer);
+            }
+
+            const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            
+            const hitbox = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            hitbox.setAttribute("cx", node.x); hitbox.setAttribute("cy", node.y); hitbox.setAttribute("r", 35);
+            hitbox.setAttribute("fill", "transparent"); hitbox.setAttribute("cursor", status === 'PLAYING' ? "pointer" : "default");
+            hitbox.onclick = () => handleNodeClick(node.val);
+            
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", 20);
+            circle.setAttribute("stroke-width", 2);
+            let circleClass = "node-circle ";
+            if (isSelected) circleClass += "node-correct";
+            else if (isMistake) circleClass += "node-mistake";
+            else circleClass += "node-default";
+            circle.setAttribute("class", circleClass);
+            circle.onclick = () => handleNodeClick(node.val);
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", node.x); text.setAttribute("y", node.y + 4);
+            text.setAttribute("text-anchor", "middle"); text.setAttribute("fill", "#f8fafc");
+            text.setAttribute("class", "font-medium text-sm pointer-events-none select-none");
+            text.textContent = node.val;
+
+            g.appendChild(hitbox);
+            g.appendChild(circle);
+            g.appendChild(text);
+
+            if (isSelected) {
+                const badgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                const badgeBg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                badgeBg.setAttribute("cx", node.x + 18); badgeBg.setAttribute("cy", node.y - 18); badgeBg.setAttribute("r", 9);
+                badgeBg.setAttribute("fill", "#22c55e");
+                const badgeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                badgeText.setAttribute("x", node.x + 18); badgeText.setAttribute("y", node.y - 14);
+                badgeText.setAttribute("text-anchor", "middle"); badgeText.setAttribute("fill", "#022c22");
+                badgeText.setAttribute("class", "font-bold text-[10px] pointer-events-none select-none");
+                badgeText.textContent = orderIndex;
+                badgeG.appendChild(badgeBg);
+                badgeG.appendChild(badgeText);
+                g.appendChild(badgeG);
+            }
+
+            nodesContainer.appendChild(g);
+        }
+
+        init();
+    </script>
+</body>
+</html>
