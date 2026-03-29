@@ -1,64 +1,64 @@
-# Desafio de Percursos - Árvores Binárias
+# 🌳 Desafio Divertido: Percursos em Árvores Binárias! 🎮
 
-## Descrição
+## Ei, Estudante! 👋
 
-Este é um projeto educacional interativo desenvolvido em HTML, CSS e JavaScript para ajudar estudantes a aprender e praticar os percursos em árvores binárias. O jogo simula desafios de percursos em pré-ordem, em-ordem e pós-ordem, com diferentes níveis de dificuldade, sistema de pontuação e feedback visual em tempo real.
+Bem-vindo ao meu projeto pessoal de estudo! Criei esse simulador gamificado para tornar o aprendizado de percursos em árvores binárias (pré-ordem, em-ordem e pós-ordem) algo super divertido e interativo. Nada de aulas chatas – aqui você joga e aprende ao mesmo tempo! 
 
-O projeto foi criado como uma ferramenta de treinamento para o vestibular UFMA 2026, focando em conceitos de recursão e estruturas de dados.
+Esse projeto nasceu da minha preparação para o vestibular UFMA 2026, focando em recursão e estruturas de dados. Quem sabe não ajuda você também? 😉
 
-## Funcionalidades
+## O Que Tem de Legal Aqui? ✨
 
-- **Modos de Percurso**: Pré-ordem, Em-ordem e Pós-ordem
-- **Níveis de Dificuldade**:
-  - Fácil: Árvore simples com 3 nós
-  - Médio: Árvore com 6 nós
-  - Difícil: Árvore complexa com 11 nós
-  - Super Difícil: Árvore muito complexa com 10 nós
-- **Sistema de Pontuação**: Pontos por desafio concluído (100-500 pts dependendo da dificuldade)
-- **Progresso Global**: Acompanhamento de 12 desafios totais
-- **Feedback Visual**: 
-  - Nós corretos ficam verdes com badge de ordem
-  - Nós incorretos piscam em vermelho com mensagem de erro
-  - Tela de vitória com confetes no final
-- **Controles**: Desfazer último movimento, limpar exercício, reiniciar tudo
+- **🎯 Modos de Percurso**: Pré-ordem, Em-ordem e Pós-ordem – clique na ordem certa e veja a magia acontecer!
+- **📈 Níveis de Dificuldade** (do fácil ao "ufa, que desafio!"):
+  - 🟢 **Fácil**: Árvore simples com 3 nós – perfeito para começar
+  - 🟡 **Médio**: 6 nós – já começa a ficar interessante
+  - 🟠 **Difícil**: 11 nós complexos, com curvas e reviravoltas
+  - 🔴 **Super Difícil**: 10 nós profundos e cheios de surpresas
+- **🏆 Sistema de Pontuação**: Ganhe pontos por cada desafio (100-500 pts)! Só na primeira vez que completa, hein? 😉
+- **📊 Progresso Global**: Acompanhe seus 12 desafios totais – vai virar mestre nisso!
+- **🎨 Feedback Visual Incrível**:
+  - Nós certos ficam verdes com um badge numerado 🏅
+  - Errou? Pisca vermelho e mostra uma dica amigável 💡
+  - Vitória? Confetes voando! 🎉
+- **🔄 Controles**: Desfazer último clique, limpar tudo ou reiniciar do zero
 
-## Tecnologias Utilizadas
+## Tecnologias Que Usei 🛠️
 
-- **HTML5**: Estrutura da página
-- **CSS3**: Estilos com Tailwind CSS (via CDN) e customizações
-- **JavaScript (ES6+)**: Lógica do jogo, manipulação DOM e renderização SVG
-- **SVG**: Renderização visual das árvores binárias
+- **HTML5**: A base sólida da página
+- **CSS3**: Estilos lindos com Tailwind CSS (via CDN) + toques personalizados
+- **JavaScript (ES6+)**: Toda a lógica do jogo, manipulação da tela e renderização
+- **SVG**: Para desenhar aquelas árvores bonitas e interativas
 
-## Como Usar
+## Como Jogar? Vamos Lá! 🚀
 
-1. **Clone ou baixe** o repositório
-2. **Abra o arquivo `index.html`** em qualquer navegador moderno
-3. **Selecione o nível de dificuldade** no seletor superior
-4. **Escolha o modo de percurso** (Pré-Ordem, Em-Ordem, Pós-Ordem)
-5. **Clique nos nós da árvore** na ordem correta do percurso selecionado
-6. **Use os botões laterais** para desfazer ou limpar se necessário
-7. **Complete todos os 12 desafios** para ver a tela final de conclusão
+1. **📥 Baixe ou clone** o repositório aqui no GitHub
+2. **🌐 Abra o `index.html`** no seu navegador favorito
+3. **🎚️ Escolha a dificuldade** no seletor lá em cima (comece fácil se for novato!)
+4. **📋 Selecione o modo** (Pré-Ordem, Em-Orderm, Pós-Ordem) nas abas estilosas
+5. **👆 Clique nos nós da árvore** na ordem correta – use o painel lateral como guia
+6. **🔙 Precisa de ajuda?** Use "Desfazer" ou "Limpar" se errar
+7. **🎊 Complete todos os 12 desafios** e veja a festa final com confetes!
 
-## Estrutura do Projeto
+## Estrutura do Projeto 📁
 
 ```
 /
-├── index.html          # Arquivo principal com todo o código
-└── README.md           # Este arquivo
+├── index.html    # Tudo aqui: HTML, CSS e JS juntos! 🤝
+└── README.md     # Este arquivo que você tá lendo 😄
 ```
 
-## Requisitos
+## O Que Você Precisa? 💻
 
-- Navegador web moderno com suporte a ES6+ e SVG
-- Conexão à internet (para carregar Tailwind CSS via CDN)
+- Um navegador moderno (Chrome, Firefox, Edge...) com suporte a ES6 e SVG
+- Internet para carregar o Tailwind CSS (mas é rapidinho!)
 
-## Contribuição
+## Quer Contribuir? 🤝
 
-Este projeto foi desenvolvido como uma ferramenta educacional específica. Sugestões de melhorias são bem-vindas através de issues ou pull requests.
+Esse projeto é meu cantinho de estudo, mas ideias são sempre bem-vindas! Abra uma issue ou mande um PR se tiver sugestões legais. Vamos tornar o aprendizado ainda mais divertido juntos!
 
-## Prompt de Criação
+## Prompt de Criação 🤖
 
-Para reproduzir ou entender a origem deste projeto, aqui está o prompt original usado para sua criação:
+Curioso sobre como isso tudo começou? Aqui vai o prompt original que usei para criar o projeto (quem sabe inspire você a fazer algo similar?):
 
 ```
 Atue como um Engenheiro de Software Sênior especializado em Front-end e Educação Interativa. 
@@ -102,6 +102,6 @@ Aqui estão os requisitos detalhados da aplicação:
 O código deve ser responsivo, limpo, bem indentado e funcionar perfeitamente apenas salvando em um arquivo `index.html` e abrindo no navegador.
 ```
 
-## Licença
+## Licença 📜
 
-Este projeto é de uso educacional e não possui licença específica definida.
+Projeto de uso educacional – sinta-se à vontade para usar e compartilhar! (Sem licença formal definida, mas com muito ❤️)
