@@ -4,7 +4,7 @@
 
 Bem-vindo ao meu projeto pessoal de estudo! Criei esse simulador gamificado para tornar o aprendizado de percursos em árvores binárias (pré-ordem, em-ordem e pós-ordem) algo super divertido e interativo. Nada de aulas chatas – aqui você joga e aprende ao mesmo tempo! 
 
-Esse projeto nasceu da minha preparação para o vestibular UFMA 2026, focando em recursão e estruturas de dados. Quem sabe não ajuda você também? 😉
+Esse projeto nasceu da minha preparação para o concurso da UFMA, focando em recursão e estruturas de dados. Quem sabe não ajuda você também? 😉
 
 ## O Que Tem de Legal Aqui? ✨
 
