@@ -1,10 +1,24 @@
 # 🌳 Desafio Divertido: Percursos em Árvores Binárias! 🎮
 
-## Ei, Estudante! 👋
+## Sobre o Projeto
 
-Bem-vindo ao meu projeto pessoal de estudo! Criei esse simulador gamificado para tornar o aprendizado de percursos em árvores binárias (pré-ordem, em-ordem e pós-ordem) algo super divertido e interativo. Nada de aulas chatas – aqui você joga e aprende ao mesmo tempo! 
+Um simulador gamificado para aprender percursos em árvores binárias (pré-ordem, em-ordem e pós-ordem) de forma interativa. Criado para ajudar na preparação para o concurso da UFMA, focando em conceitos de recursão e estruturas de dados.
 
-Esse projeto nasceu da minha preparação para o concurso da UFMA, focando em recursão e estruturas de dados. Quem sabe não ajuda você também? 😉
+## O Que Tem de Legal Aqui? ✨
+
+- **🎯 Modos de Percurso**: Pré-ordem, Em-ordem e Pós-ordem – clique na ordem certa e veja a magia acontecer!
+- **📈 Níveis de Dificuldade** (do fácil ao "ufa, que desafio!"):
+  - 🟢 **Fácil**: Árvore simples com 3 nós – perfeito para começar
+  - 🟡 **Médio**: 6 nós – já começa a ficar interessante
+  - 🟠 **Difícil**: 11 nós complexos, com curvas e reviravoltas
+  - 🔴 **Super Difícil**: 10 nós profundos e cheios de surpresas
+- **🏆 Sistema de Pontuação**: Ganhe pontos por cada desafio (100-500 pts)! Só na primeira vez que completa, hein? 😉
+- **📊 Progresso Global**: Acompanhe seus 12 desafios totais – vai virar mestre nisso!
+- **🎨 Feedback Visual Incrível**:
+  - Nós certos ficam verdes com um badge numerado 🏅
+  - Errou? Pisca vermelho e mostra uma dica amigável 💡
+  - Vitória? Confetes voando! 🎉
+- **🔄 Controles**: Desfazer último clique, limpar tudo ou reiniciar do zero
 
 ## O Que Tem de Legal Aqui? ✨
 
@@ -54,7 +68,7 @@ Esse projeto nasceu da minha preparação para o concurso da UFMA, focando em re
 
 ## Quer Contribuir? 🤝
 
-Esse projeto é meu cantinho de estudo, mas ideias são sempre bem-vindas! Abra uma issue ou mande um PR se tiver sugestões legais. Vamos tornar o aprendizado ainda mais divertido juntos!
+Sugestões são bem-vindas! Abra uma issue ou mande um PR se tiver ideias para melhorar.
 
 ## Prompt de Criação 🤖
 
@@ -104,4 +118,4 @@ O código deve ser responsivo, limpo, bem indentado e funcionar perfeitamente ap
 
 ## Licença 📜
 
-Projeto de uso educacional – sinta-se à vontade para usar e compartilhar! (Sem licença formal definida, mas com muito ❤️)
+Projeto de uso educacional – sinta-se à vontade para usar e compartilhar!
